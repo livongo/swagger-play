@@ -362,14 +362,21 @@ public class PlayReader {
         info.getVendorExtensions().putAll(BaseReaderUtils.parseExtensions(infoConfig.extensions()));
     }
 
+    // Livongo: changed to put documented implicit params before likely undocumented explicit params instead of
+    // after, such that Swagger UI displays param documentation in case of implicit/explicit param with same name.
     private void readImplicitParameters(Method method, Operation operation, Class<?> cls) {
         ApiImplicitParams implicitParams = method.getAnnotation(ApiImplicitParams.class);
         if (implicitParams != null && implicitParams.value().length > 0) {
+            List<Parameter> explicitParams = operation.getParameters();
+            operation.setParameters(null);
             for (ApiImplicitParam param : implicitParams.value()) {
                 Parameter p = readImplicitParam(param, cls);
                 if (p != null) {
                     operation.addParameter(p);
                 }
+            }
+            for (Parameter param : explicitParams) {
+                operation.addParameter(param);
             }
         }
     }

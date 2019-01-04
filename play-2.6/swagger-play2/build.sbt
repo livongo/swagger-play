@@ -1,5 +1,7 @@
+import sbt.Credentials
+
 name := "swagger-play2"
-version := "1.6.1-SNAPSHOT"
+version := "1.6.1-SNAPSHOT.livongo"
 
 checksums in update := Nil
 
@@ -21,17 +23,19 @@ libraryDependencies ++= Seq(
 
 mappings in (Compile, packageBin) ~= { _.filter(!_._1.getName.equals("logback.xml")) }
 
-publishTo <<= version { (v: String) =>
-  val nexus = "https://oss.sonatype.org/"
-  if (v.trim.endsWith("SNAPSHOT"))
-    Some("snapshots" at nexus + "content/repositories/snapshots")
-  else
-    Some("releases"  at nexus + "service/local/staging/deploy/maven2")
-}
+publishTo := Some("Artifactory Realm" at "http://52.7.159.52/artifactory/ext-release-local")
+credentials += Credentials("Artifactory Realm", "52.7.159.52", "admin", "AP51HF7hmZL7Y9oLgMWbt9ABDBr")
+//publishTo <<= version { (v: String) =>
+//  val nexus = "https://oss.sonatype.org/"
+//  if (v.trim.endsWith("SNAPSHOT"))
+//    Some("snapshots" at nexus + "content/repositories/snapshots")
+//  else
+//    Some("releases"  at nexus + "service/local/staging/deploy/maven2")
+//}
 publishArtifact in Test := false
 publishMavenStyle := true
 pomIncludeRepository := { x => false }
-credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
+//credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
 organization := "io.swagger"
 resolvers += Resolver.sonatypeRepo("snapshots")
 pomExtra := {
